@@ -72,5 +72,5 @@ for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
     print(f"There are {featuredf[input_feature].shape[1]} feature in {input_feature} feature")
 
     ##### save feature matrix to file
-    featuredf[input_feature].to_csv(os.path.join(path_to_save_merge_feature, f"{f}_features.csv"), index = False)
+    featuredf[input_feature].to_csv(os.path.join(path_to_save_merge_feature, f"{input_feature}_features.csv"), index = False)
     
