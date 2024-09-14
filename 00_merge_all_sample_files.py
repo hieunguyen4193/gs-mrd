@@ -48,7 +48,6 @@ else:
 rerun_samples = pd.read_csv("rerun_samples_not_used.txt", header = None)[0].unique()
 
 featuredf = dict()
-rerun_featuredf = dict()
 all_files = dict()
 for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
     all_files[input_feature] = [item for item in pathlib.Path(os.path.join(path_to_storage, PROJECT)).glob("*/*/*{}*.csv".format(input_feature))]
@@ -75,17 +74,15 @@ for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
 
     batch_metadata.to_csv(os.path.join(path_to_save_merge_feature, f"{input_feature}_batch_metadata.csv"), index = False)
 
-    rerun_featuredf[input_feature] = featuredf[input_feature][featuredf[input_feature]["SampleID"].isin(rerun_samples)]
     featuredf[input_feature] = featuredf[input_feature][~featuredf[input_feature]["SampleID"].isin(rerun_samples)]
     
-    rerun_featuredf[input_feature]["SampleID"] = rerun_featuredf[input_feature]["SampleID"].apply(lambda x: x.split("-")[1])
-    featuredf[input_feature]["SampleID"] = featuredf[input_feature]["SampleID"].apply(lambda x: x.split("-")[1])
+    # featuredf[input_feature]["SampleID"] = featuredf[input_feature]["SampleID"].apply(lambda x: x.split("-")[1])
     
     ##### remove duplicated labcodes
     featuredf[input_feature] = featuredf[input_feature][~featuredf[input_feature].duplicated()]
     
     ##### temporarily remove samples that are not in the metadata
-    featuredf[input_feature] = featuredf[input_feature][featuredf[input_feature]["SampleID"].isin(metadata["SampleID"].unique())]
+    # featuredf[input_feature] = featuredf[input_feature][featuredf[input_feature]["SampleID"].isin(metadata["SampleID"].unique())]
     print(f"There are {featuredf[input_feature].shape[0]} samples in {input_feature} feature")
     print(f"There are {featuredf[input_feature].shape[1]} feature in {input_feature} feature")
 

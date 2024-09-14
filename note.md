@@ -11,3 +11,5 @@
 - input data stored at hieu-server: `/media/hieunguyen/GSHD_HN01/storage/gs-mrd`. 
 - output: `/media/hieunguyen/HNSD_mini/outdir/gs-mrd`
 - github: https://github.com/hieunguyen4193/gs-mrd 
+
+## How to update new data and update model-release?
