@@ -14,11 +14,11 @@ import ot
 import pickle
 
 PROJECT = "gs-mrd"
-
+data_merge_version = "20240914"
 maindir = "/media/hieunguyen/GSHD_HN01"
 path_to_storage = os.path.join(maindir, "storage")
 path_to_main_src = "/media/hieunguyen/HNSD01/src/gs-mrd"
-path_to_save_merge_feature = os.path.join(path_to_main_src, "all_samples")
+path_to_save_merge_feature = os.path.join(path_to_main_src, "all_samples", data_merge_version)
 os.system(f"mkdir -p {path_to_save_merge_feature}")
 
 ##### modify metadata
@@ -52,6 +52,8 @@ rerun_featuredf = dict()
 all_files = dict()
 for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
     all_files[input_feature] = [item for item in pathlib.Path(os.path.join(path_to_storage, PROJECT)).glob("*/*/*{}*.csv".format(input_feature))]
+    print(f"Found {len(all_files[input_feature])} files in {input_feature} feature")
+    
     featuredf[input_feature] = pd.DataFrame()
     for file in all_files[input_feature]:
         tmpdf = pd.read_csv(file, index_col = [0])
@@ -64,6 +66,8 @@ for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
     
     rerun_featuredf[input_feature]["SampleID"] = rerun_featuredf[input_feature]["SampleID"].apply(lambda x: x.split("-")[1])
     featuredf[input_feature]["SampleID"] = featuredf[input_feature]["SampleID"].apply(lambda x: x.split("-")[1])
+    
+    ##### remove duplicated labcodes
     featuredf[input_feature] = featuredf[input_feature][~featuredf[input_feature].duplicated()]
     
     ##### temporarily remove samples that are not in the metadata
@@ -72,5 +76,7 @@ for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
     print(f"There are {featuredf[input_feature].shape[1]} feature in {input_feature} feature")
 
     ##### save feature matrix to file
-    featuredf[input_feature].to_csv(os.path.join(path_to_save_merge_feature, f"{input_feature}_features.csv"), index = False)
-    
+    if os.path.isfile(os.path.join(path_to_save_merge_feature, f"{input_feature}_features.csv")) == False:
+        featuredf[input_feature].to_csv(os.path.join(path_to_save_merge_feature, f"{input_feature}_features.csv"), index = False)
+    else:
+        print(f"File exists, do not generate new data")    
