@@ -106,5 +106,5 @@ for input_feature in ["EM", "FLEN", "NUCLEOSOME"]:
     else:
         nmf_flen_cancer_signal = 2
     pd.DataFrame(data = [nmf_flen_cancer_signal], columns = ["nmf_flen_cancer_signal"]).to_csv(f"{path_to_model_files}/NMF_{input_feature}_cancer_signal.csv")
-    filename = os.path.join(path_to_model_files, 'NMF_{input_feature}.sav')
+    filename = os.path.join(path_to_model_files, f"NMF_{input_feature}.sav")
     pickle.dump(model, open(filename, 'wb'))
