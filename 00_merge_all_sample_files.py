@@ -53,22 +53,28 @@ all_files = dict()
 for input_feature in ["EM", "FLEN", "NUCLEOSOME", "IchorCNA"]:
     all_files[input_feature] = [item for item in pathlib.Path(os.path.join(path_to_storage, PROJECT)).glob("*/*/*{}*.csv".format(input_feature))]
     print(f"Found {len(all_files[input_feature])} files in {input_feature} feature")
-    
-    batch_metadata = pd.DataFrame.from_dict(
-    {
-        "RUN": [str(item).split("/")[-2] for item in all_files[input_feature]],
-        "Group_RUN": [str(item).split("/")[-3] for item in all_files[input_feature]],
-        "path": [str(item) for item in all_files[input_feature]]
-    })
-    batch_metadata.to_csv(os.path.join(path_to_save_merge_feature, f"{input_feature}_batch_metadata.csv"), index = False)
-    
+        
     featuredf[input_feature] = pd.DataFrame()
+    batch_metadata = pd.DataFrame()
+    
     for file in all_files[input_feature]:
+        batch_name = str(file).split("/")[-3]
+        run_name = str(file).split("/")[-2]
         tmpdf = pd.read_csv(file, index_col = [0])
-        # tmpdf = pd.read_csv(file)
         tmpdf.columns = ["SampleID"] + list(tmpdf.columns)[1:]
         tmpdf["SampleID"] = tmpdf["SampleID"].apply(lambda x: x.split("_")[0])
+        tmp_batch_metadata = pd.DataFrame(
+            {
+                "SampleID": tmpdf.SampleID.unique(),    
+                "RUN": [run_name for item in tmpdf.SampleID.unique()],
+                "Group_RUN": [batch_name for item in tmpdf.SampleID.unique()]
+            }
+        )
+        batch_metadata = pd.concat([batch_metadata, tmp_batch_metadata], axis = 0)
         featuredf[input_feature] = pd.concat([featuredf[input_feature], tmpdf], axis = 0)
+
+    batch_metadata.to_csv(os.path.join(path_to_save_merge_feature, f"{input_feature}_batch_metadata.csv"), index = False)
+
     rerun_featuredf[input_feature] = featuredf[input_feature][featuredf[input_feature]["SampleID"].isin(rerun_samples)]
     featuredf[input_feature] = featuredf[input_feature][~featuredf[input_feature]["SampleID"].isin(rerun_samples)]
     
