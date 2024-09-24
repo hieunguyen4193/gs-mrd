@@ -12,10 +12,16 @@ import os
 import ot
 import pickle
 import argparse
-
+import random
 ##### Helper functions for OPTIMAL TRANSPORT DISTANCE
 
-def calculate_barycenter(A, n = 301, show_plot=False, M = None):
+def calculate_barycenter(inputdf, samplelist, n, show_plot=False, M = None):
+    first_sample = samplelist["Healthy"][0]
+
+    A = inputdf[[first_sample]].to_numpy()
+    for sampleid in samplelist["Healthy"][1:]:
+        a2 = inputdf[[sampleid]].to_numpy()
+        A = np.hstack((A, a2))
     n_distributions = A.shape[1]
 
     # loss matrix + normalization
@@ -28,8 +34,6 @@ def calculate_barycenter(A, n = 301, show_plot=False, M = None):
     # l2bary
     bary_l2 = A.dot(weights)
 
-    # wasserstein
-    reg = 1e-3
     if show_plot:
         f, (ax1, ax2) = plt.subplots(2, 1, tight_layout=True, num=1)
         ax1.plot(x, A, color="black")
