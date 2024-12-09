@@ -46,7 +46,7 @@ for fold in range(1, numFold):
 
     metadata["Cancer"] = metadata["SampleID"].apply(lambda x: general_metadata[general_metadata["SampleID"] == x.split("-")[1]].Cancer.unique()[0])
     metadata["True label"] = metadata["SampleID"].apply(lambda x: general_metadata[general_metadata["SampleID"] == x.split("-")[1]]["True label"].unique()[0])
-
+    metadata = metadata[metadata["True label"].isin(["+", "-"])]
     ##### feature matrix
     motif_order = pd.read_csv("motif_order.csv").motif_order.to_list()
 
@@ -321,7 +321,7 @@ for fold in range(1, numFold):
 
 
     feature_combinations = []
-    for i in range(2, len(all_features) + 1):
+    for i in range(1, len(all_features) + 1):
         feature_combinations.extend(combinations(all_features, i))
 
 
