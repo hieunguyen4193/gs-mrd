@@ -27,7 +27,8 @@ path_to_main_src = "/media/hieunguyen/HNSD01/src/gs-mrd"
 path_to_merge_samples = f"{path_to_main_src}/all_samples/{merge_version}"
 
 path_to_save_output = os.path.join(path_to_main_src, "output")
-for fold in range(1, 21):
+numFold = 50
+for fold in range(1, numFold):
     print(f"working on fold {fold}")
     path_to_02_output = os.path.join(path_to_save_output, "02_output", f"fold{fold}")
 
