@@ -132,7 +132,7 @@ for fold in range(1, 21):
         sns.lineplot(H[0, ], label = "Cancer")
         sns.lineplot(H[1, ], label = "Healthy")
         plt.legend()
-        plt.show()
+        # plt.show()
 
         signal1 = [i for i,j in enumerate(H[0, ]) if j == np.max(H[0, ])][0]
         signal2 = [i for i,j in enumerate(H[1, ]) if j == np.max(H[1, ])][0]
@@ -337,4 +337,7 @@ for fold in range(1, 21):
         return(sen, spec)
 
     combinedf[["SEN", "SPEC"]] = combinedf["feature_combinations"].apply(lambda x: get_Sen_Spec_for_combi(x)).apply(pd.Series)
+    highlight_features = ["SEN", "SPEC"]
+    combinedf = combinedf.sort_values(by = "SPEC", ascending=False)
+    combinedf.style.background_gradient(subset = highlight_features).to_excel(os.path.join(path_to_02_output, f"resdf_fold{fold}.color.xlsx"), index = False)
     combinedf.to_csv(f"{path_to_02_output}/resdf_fold{fold}.csv")
