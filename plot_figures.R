@@ -123,7 +123,7 @@ tmpdf %>%
         axis.title = element_text(size = 25),
         legend.text = element_text(size = 25),
         legend.title = element_text(size = 25)) + 
-  xlab(xlab.names[["FLEN"]]) + ylab("Density") +
+  xlab(xlab.names[["EM"]]) + ylab("Density") +
   scale_fill_manual(values = c("red", "gray")) 
 
 
